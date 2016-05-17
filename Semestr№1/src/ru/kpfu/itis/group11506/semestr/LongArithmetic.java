@@ -1,178 +1,146 @@
 package ru.kpfu.itis.group11506.semestr;
 
-class LongArithmetic {
+public class LongArithmetic {
 
-    String addition(String a1, String b1) {
-        String number;
-        byte[] a, b;
-        boolean isANegative = false, isBNegative = false;
-        a = new byte[a1.length() + b1.length()];
-        for (int i = a1.length() - 1; i > -1; i--) {
-            int j = a1.length() - i - 1;
-            a[i] = (byte) Character.getNumericValue(a1.charAt(j));
-        }
-        b = new byte[b1.length() + a1.length()];
-        for (int i = b1.length() - 1; i > -1; i--) {
-            int j = b1.length() - i - 1;
-            b[i] = (byte) Character.getNumericValue(b1.charAt(j));
-        }
-        for (int i = a.length - 1; i > -1; i--) {
-            if (a[i] == -1) {
-                isANegative = true;
-                a[i] = 0;
-            }
-        }
-        for (int i = b.length - 1; i > -1; i--) {
-            if (b[i] == -1) {
-                isBNegative = true;
-                b[i] = 0;
-            }
-        }
+    private static final int BASE_MULTIPLY = 8;
+    private String result;
+
+    public String addition(String stringNumber1, String stringNumber2) throws NotANumberExeption {
+        int lengthSum = stringNumber1.length() + stringNumber2.length();
+
+        StringTransformer stringTransformer = new StringTransformer(stringNumber1, stringNumber2).invoke(
+                lengthSum, lengthSum);
+        boolean isANegative = stringTransformer.isANegative();
+        boolean isBNegative = stringTransformer.isBNegative();
+        byte[] byteNumber1 = stringTransformer.getByteNumber1();
+        byte[] byteNumber2 = stringTransformer.getByteNumber2();
         if (isANegative && !isBNegative) {
-            a1 = a1.replace("-", "");
-            number = subtraction(b1, a1);
+            stringNumber1 = stringNumber1.replace("-", "");
+            result = subtraction(stringNumber2, stringNumber1);
         } else if (!isANegative && isBNegative) {
-            b1 = b1.replace("-", "");
-            number = subtraction(a1, b1);
+            stringNumber2 = stringNumber2.replace("-", "");
+            result = subtraction(stringNumber1, stringNumber2);
         } else {
             if (isANegative) {
-                number = stringReturner(true, add(a, b));
+                result = toString(true, add(byteNumber1, byteNumber2));
             } else {
-                number = stringReturner(false, add(a, b));
+                result = toString(false, add(byteNumber1, byteNumber2));
             }
         }
-        return number;
+        return result;
     }
 
-    private byte[] add(byte[] a, byte[] b) {
-        byte[] bb = new byte[a.length + b.length];
-        System.arraycopy(b, 0, bb, 0, b.length);
-        byte j1 = 0;
-        byte[] c = new byte[a.length + bb.length];
-        System.arraycopy(a, 0, c, 0, a.length);
-        for (int i = 0; i < bb.length; i++) {
-            byte j = (byte) (c[i] + bb[i]);
-            c[i] = (byte) ((j1 + j) % 10);
-            j1 = (byte) ((j + j1) / 10);
+    private byte[] add(byte[] byteNumber1, byte[] byteNumber2) {
+        byte[] anotherArray = new byte[byteNumber1.length + byteNumber2.length];
+        System.arraycopy(byteNumber2, 0, anotherArray, 0, byteNumber2.length);
+        byte surplus = 0;
+        byte[] resultation = new byte[byteNumber1.length + anotherArray.length];
+        System.arraycopy(byteNumber1, 0, resultation, 0, byteNumber1.length);
+        for (int i = 0; i < anotherArray.length; i++) {
+            byte sum = (byte) (resultation[i] + anotherArray[i]);
+            resultation[i] = (byte) ((surplus + sum) % 10);
+            surplus = (byte) ((sum + surplus) / 10);
         }
-        String t = stringReturner(false, c);
-        c = new byte[t.length()];
+        String t = toString(false, resultation);
+        resultation = new byte[t.length()];
         for (int i = t.length() - 1; i > -1; i--) {
             int j11 = t.length() - i - 1;
-            c[i] = (byte) Character.getNumericValue(t.charAt(j11));
+            resultation[i] = (byte) Character.getNumericValue(t.charAt(j11));
         }
-        return c;
+        return resultation;
     }
 
-    String subtraction(String a1, String b1) {
-        String number;
-        byte[] a, b;
-        boolean isANegative = false, isBNegative = false;
-        a = new byte[a1.length()];
-        for (int i = a1.length() - 1; i > -1; i--) {
-            int j = a1.length() - i - 1;
-            a[i] = (byte) Character.getNumericValue(a1.charAt(j));
-        }
-        b = new byte[b1.length()];
-        for (int i = b1.length() - 1; i > -1; i--) {
-            int j = b1.length() - i - 1;
-            b[i] = (byte) Character.getNumericValue(b1.charAt(j));
-        }
-        for (int i = a.length - 1; i > -1; i--) {
-            if (a[i] == -1) {
-                isANegative = true;
-                a[i] = 0;
-            }
-        }
-        for (int i = b.length - 1; i > -1; i--) {
-            if (b[i] == -1) {
-                isBNegative = true;
-                b[i] = 0;
-            }
-        }
+    public String subtraction(String stringNumber1, String stringNumber2) throws NotANumberExeption {
+        int lengthSum = stringNumber1.length() + stringNumber2.length();
+        StringTransformer stringTransformer = new StringTransformer(stringNumber1, stringNumber2).invoke(
+                lengthSum, lengthSum);
+        boolean isANegative = stringTransformer.isANegative();
+        boolean isBNegative = stringTransformer.isBNegative();
+        byte[] byteNumber1 = stringTransformer.getByteNumber1();
+        byte[] byteNumber2 = stringTransformer.getByteNumber2();
         if (isANegative && !isBNegative) {
-            number = stringReturner(true, add(a, b));
+            result = toString(true, add(byteNumber1, byteNumber2));
         } else if (!isANegative && isBNegative) {
-            number = stringReturner(false, add(a, b));
+            result = toString(false, add(byteNumber1, byteNumber2));
         } else {
             if (isANegative) {
-                byte[] helper = a;
-                a = b;
-                b = helper;
+                byte[] helper = byteNumber1;
+                byteNumber1 = byteNumber2;
+                byteNumber2 = helper;
             }
-            if (compare(a, b) == 1 || compare(a, b) == 0) {
-                number = stringReturner(false, deduct(a, b));
+            if (compare(byteNumber1, byteNumber2) == 1 || compare(byteNumber1, byteNumber2) == 0) {
+                result = toString(false, deduct(byteNumber1, byteNumber2));
             } else {
-                number = stringReturner(true, deduct(b, a));
+                result = toString(true, deduct(byteNumber2, byteNumber1));
             }
         }
-        return number;
+        return result;
     }
 
-    private byte[] deduct(byte[] a, byte[] b) {
-        byte[] bb = new byte[a.length + b.length];
-        System.arraycopy(b, 0, bb, 0, b.length);
-        int helper = 0;
-        byte[] c = new byte[a.length + bb.length];
-        System.arraycopy(a, 0, c, 0, a.length);
-        for (int i = 0; i < bb.length; i++) {
-            byte j = (byte) (c[i] - bb[i]);
+    private byte[] deduct(byte[] byteNumber1, byte[] byteNumber2) {
+        byte[] anotherArray = new byte[byteNumber1.length + byteNumber2.length];
+        System.arraycopy(byteNumber2, 0, anotherArray, 0, byteNumber2.length);
+        int surplus = 0;
+        byte[] resultation = new byte[byteNumber1.length + anotherArray.length];
+        System.arraycopy(byteNumber1, 0, resultation, 0, byteNumber1.length);
+        for (int i = 0; i < anotherArray.length; i++) {
+            byte j = (byte) (resultation[i] - anotherArray[i]);
             if (j < 0) {
-                if (c[i + 1] == 0) {
-                    while (c[i + 1 + helper] == 0) {
-                        c[i + 1 + helper] = 9;
-                        helper += 1;
+                if (resultation[i + 1] == 0) {
+                    while (resultation[i + 1 + surplus] == 0) {
+                        resultation[i + 1 + surplus] = 9;
+                        surplus += 1;
                     }
-                    c[i + 1 + helper] -= 1;
-                    helper = 0;
+                    resultation[i + 1 + surplus] -= 1;
+                    surplus = 0;
                 } else {
-                    c[i + 1] -= 1;
+                    resultation[i + 1] -= 1;
                 }
-                c[i] = (byte) (10 + j);
+                resultation[i] = (byte) (10 + j);
             } else {
-                c[i] = j;
+                resultation[i] = j;
             }
         }
-        String t = stringReturner(false, c);
-        c = new byte[t.length()];
+        String t = toString(false, resultation);
+        resultation = new byte[t.length()];
         for (int i = t.length() - 1; i > -1; i--) {
             int j11 = t.length() - i - 1;
-            c[i] = (byte) Character.getNumericValue(t.charAt(j11));
+            resultation[i] = (byte) Character.getNumericValue(t.charAt(j11));
         }
-        return c;
+        return resultation;
     }
 
 
-    private String stringReturner(boolean needNegative, byte[] c) {
+    private String toString(boolean needNegative, byte[] resultation) {
         int index = 0;
-        String a;
+        String byteNumber1;
         if (needNegative) {
-            a = "-";
+            byteNumber1 = "-";
         } else {
-            a = "";
+            byteNumber1 = "";
         }
-        for (int i = c.length - 1; i > -1; i--) {
-            if (c[i] != 0) {
+        for (int i = resultation.length - 1; i > -1; i--) {
+            if (resultation[i] != 0) {
                 index = i;
                 break;
             }
         }
         for (int i = index; i > -1; i--) {
-            a = a + c[i];
+            byteNumber1 = byteNumber1 + resultation[i];
         }
-        return a;
+        return byteNumber1;
     }
 
-    private int compare(byte[] a, byte[] b) {
-        if (a.length > b.length) {
+    private int compare(byte[] byteNumber1, byte[] byteNumber2) {
+        if (byteNumber1.length > byteNumber2.length) {
             return 1;
-        } else if (a.length < b.length) {
+        } else if (byteNumber1.length < byteNumber2.length) {
             return -1;
         } else {
-            for (int i = a.length - 1; i > -1; i--) {
-                if (a[i] > b[i]) {
+            for (int i = byteNumber1.length - 1; i > -1; i--) {
+                if (byteNumber1[i] > byteNumber2[i]) {
                     return 1;
-                } else if (a[i] < b[i]) {
+                } else if (byteNumber1[i] < byteNumber2[i]) {
                     return -1;
                 }
             }
@@ -180,148 +148,162 @@ class LongArithmetic {
         }
     }
 
-    String multiplication(String a1, String b1) {
-        String number;
-        byte[] a, b;
-        boolean isANegative = false, isBNegative = false;
-        a = new byte[a1.length()];
-        for (int i = a1.length() - 1; i > -1; i--) {
-            int j = a1.length() - i - 1;
-            a[i] = (byte) Character.getNumericValue(a1.charAt(j));
-        }
-        b = new byte[b1.length()];
-        for (int i = b1.length() - 1; i > -1; i--) {
-            int j = b1.length() - i - 1;
-            b[i] = (byte) Character.getNumericValue(b1.charAt(j));
-        }
-        for (int i = a.length - 1; i > -1; i--) {
-            if (a[i] == -1) {
-                isANegative = true;
-                a[i] = 0;
-            }
-        }
-        for (int i = b.length - 1; i > -1; i--) {
-            if (b[i] == -1) {
-                isBNegative = true;
-                b[i] = 0;
-            }
-        }
+    public String multiplication(String stringNumber1, String stringNumber2) throws NotANumberExeption {
+        StringTransformer stringTransformer = new StringTransformer(stringNumber1, stringNumber2).invoke(
+                stringNumber1.length(), stringNumber2.length());
+        boolean isANegative = stringTransformer.isANegative();
+        boolean isBNegative = stringTransformer.isBNegative();
+        byte[] byteNumber1 = stringTransformer.getByteNumber1();
+        byte[] byteNumber2 = stringTransformer.getByteNumber2();
         if ((isANegative && isBNegative) || (!isANegative) && (!isBNegative)) {
-            number = stringReturner(false, multiply(a, b));
+            result = toString(false, multiply(byteNumber1, byteNumber2));
         } else {
-            number = stringReturner(true, multiply(a, b));
+            result = toString(true, multiply(byteNumber1, byteNumber2));
         }
-
-
-        return number;
+        return result;
     }
 
-
-    private byte[] multiply(byte[] a, byte[] b) {
+    // byteNumber1 * byteNumber2 = a0*b0 + ((a00 + a1) * (b00 + b1) - a0*b0 - a1*b1) * 10^(BASE_MULTIPLY)+
+    // + a1*b1*10^(BASE_MULTIPLY*2)
+    private byte[] multiply(byte[] byteNumber1, byte[] byteNumber2) {
         long a0, b0;
         byte[] a0b0, a1b1, a0a1b0b1, x, y, a1, b1, a00, b00;
-        String j, j2;
-        if (a.length > 8) {
-            a0 = Long.parseLong(stringReturner(false, a).substring(
-                    stringReturner(false, a).length() - 8, stringReturner(false, a).length()));
-            a1 = new byte[a.length - 8];
-            System.arraycopy(a, 8, a1, 0, a.length - 8);
-            j = stringReturner(false, a).substring(
-                    stringReturner(false, a).length() - 8, stringReturner(false, a).length());
-            a00 = new byte[j.length()];
-            for (int i = j.length() - 1; i > -1; i--) {
-                int m = j.length() - i - 1;
-                a00[i] = (byte) Character.getNumericValue(j.charAt(m));
+        String substringForInitA00, substringForInitB00;
+        if (byteNumber1.length > BASE_MULTIPLY) {
+            a0 = Long.parseLong(toString(false, byteNumber1).substring(
+                    toString(false, byteNumber1).length() - BASE_MULTIPLY, toString(false, byteNumber1).length()));
+            a1 = new byte[byteNumber1.length - BASE_MULTIPLY];
+            System.arraycopy(byteNumber1, BASE_MULTIPLY, a1, 0, byteNumber1.length - BASE_MULTIPLY);
+            substringForInitA00 = toString(false, byteNumber1).substring(
+                    toString(false, byteNumber1).length() - BASE_MULTIPLY, toString(false, byteNumber1).length());
+            a00 = new byte[substringForInitA00.length()];
+            for (int i = substringForInitA00.length() - 1; i > -1; i--) {
+                int m = substringForInitA00.length() - i - 1;
+                a00[i] = (byte) Character.getNumericValue(substringForInitA00.charAt(m));
             }
         } else {
-            a0 = byteArraytoLong(a);
+            a0 = byteArraytoLong(byteNumber1);
             a1 = new byte[]{0};
             a00 = longToByteArray(a0);
         }
-        if (b.length > 8) {
-            b0 = Long.parseLong(stringReturner(false, b).substring(
-                    stringReturner(false, b).length() - 8, stringReturner(false, b).length()));
-            b1 = new byte[b.length - 8];
-            System.arraycopy(b, 8, b1, 0, b.length - 8);
-            j2 = stringReturner(false, b).substring(
-                    stringReturner(false, b).length() - 8, stringReturner(false, b).length());
-            b00 = new byte[j2.length()];
-            for (int i = j2.length() - 1; i > -1; i--) {
-                int m = j2.length() - i - 1;
-                b00[i] = (byte) Character.getNumericValue(j2.charAt(m));
+        if (byteNumber2.length > BASE_MULTIPLY) {
+            b0 = Long.parseLong(toString(false, byteNumber2).substring(
+                    toString(false, byteNumber2).length() - BASE_MULTIPLY, toString(false, byteNumber2).length()));
+            b1 = new byte[byteNumber2.length - BASE_MULTIPLY];
+            System.arraycopy(byteNumber2, BASE_MULTIPLY, b1, 0, byteNumber2.length - BASE_MULTIPLY);
+            substringForInitB00 = toString(false, byteNumber2).substring(
+                    toString(false, byteNumber2).length() - BASE_MULTIPLY, toString(false, byteNumber2).length());
+            b00 = new byte[substringForInitB00.length()];
+            for (int i = substringForInitB00.length() - 1; i > -1; i--) {
+                int m = substringForInitB00.length() - i - 1;
+                b00[i] = (byte) Character.getNumericValue(substringForInitB00.charAt(m));
             }
         } else {
-            b0 = byteArraytoLong(b);
+            b0 = byteArraytoLong(byteNumber2);
             b1 = new byte[]{0};
             b00 = longToByteArray(b0);
         }
         a0b0 = longToByteArray(a0 * b0);
-        if (add(a00, a1).length > 8 || add(b00, b1).length > 8) {
+        if (add(a00, a1).length > BASE_MULTIPLY || add(b00, b1).length > BASE_MULTIPLY) {
             a0a1b0b1 = multiply(add(a00, a1), add(b00, b1));
         } else {
             a0a1b0b1 = longToByteArray(byteArraytoLong(add(a00, a1)) * byteArraytoLong(add(b00, b1)));
         }
-        if (a1.length > 8 || b1.length > 8) {
+        if (a1.length > BASE_MULTIPLY || b1.length > BASE_MULTIPLY) {
             a1b1 = multiply(a1, b1);
         } else {
             a1b1 = longToByteArray(byteArraytoLong(a1) * byteArraytoLong(b1));
         }
-        x = getZeros(8, deduct((deduct(a0a1b0b1, a0b0)), a1b1));
-        y = getZeros(16, a1b1);
+        x = getZeros(BASE_MULTIPLY, deduct((deduct(a0a1b0b1, a0b0)), a1b1));
+        y = getZeros(BASE_MULTIPLY * 2, a1b1);
 
         return add(add(a0b0, x), y);
     }
 
-
     private byte[] longToByteArray(long l) {
-        byte[] a;
+        byte[] byteNumber1;
         String string = Long.toString(l);
-        a = new byte[string.length()];
+        byteNumber1 = new byte[string.length()];
         for (int i = string.length() - 1; i > -1; i--) {
             int j = string.length() - i - 1;
-            a[i] = (byte) Character.getNumericValue(string.charAt(j));
+            byteNumber1[i] = (byte) Character.getNumericValue(string.charAt(j));
         }
-        return a;
+        return byteNumber1;
     }
 
     private long byteArraytoLong(byte[] array) {
-        return Long.parseLong(stringReturner(false, array));
+        return Long.parseLong(toString(false, array));
 
     }
 
 
-    private byte[] getZeros(int zeroLength, byte[] b) {
-        byte[] c = new byte[b.length + zeroLength];
-        System.arraycopy(b, 0, c, zeroLength, b.length);
-        return c;
+    private byte[] getZeros(int zeroLength, byte[] byteNumber2) {
+        byte[] resultation = new byte[byteNumber2.length + zeroLength];
+        System.arraycopy(byteNumber2, 0, resultation, zeroLength, byteNumber2.length);
+        return resultation;
     }
 
-    String degree(int n, String number) {
-        String s = number;
+    String degree(int n, String result) throws NotANumberExeption {
+        String s = result;
         while (n > 1) {
-            s = multiplication(s, number);
+            s = multiplication(s, result);
             n -= 1;
         }
         return s;
     }
 
-    String leftLogicalShift(int n, String number) {
+    public String leftLogicalShift(int n, String result) throws NotANumberExeption {
         long l = (long) Math.pow(2d, (double) n);
-        return multiplication(stringReturner(false, longToByteArray(l)), number);
+        return multiplication(toString(false, longToByteArray(l)), result);
     }
 
 
-    byte[] convertToArray(String one) { //преобразует string в байтовый массив
-        byte[] a = new byte[one.length()];
-        for (int i = 0; i < one.length(); i++) {
-            a[i] = Byte.valueOf(String.valueOf(one.charAt(i)));
+    private byte[] convertToArray(int begin, String one) { //преобразует string в байтовый массив
+        byte[] byteNumber1 = new byte[one.length() - begin];
+        for (int i = begin; i < one.length(); i++) {
+            byteNumber1[i - begin] = Byte.valueOf(String.valueOf(one.charAt(i)));
         }
-        return a;
+        return byteNumber1;
     }
 
-    byte[] division(byte[] one, byte[] two) { //деление
+    private boolean isNumber(String string) {
+        boolean flag = true;
+        int chislo = Character.getNumericValue(string.charAt(0));
+        if (chislo > 9 || (string.charAt(0) != '-' && chislo == -1)) {
+            flag = false;
+        }
+        for (int i = 1; i < string.length(); i++) {
+            chislo = Character.getNumericValue(string.charAt(i));
+            if(flag && chislo > 9 && chislo > -1)
+                flag = false;
+        }
+
+        return flag;
+    }
+
+    public byte[] division(String first, String second) throws NotANumberExeption { //деление
+        if (!isNumber(first) || !isNumber(second)) {
+            NotANumberExeption e = new NotANumberExeption("You're such an idiot!! It was not a number!");
+            throw e;
+        }
+        boolean isNegative = false;
+        if ((first.charAt(0) == '-' && second.charAt(0) != '-') || (first.charAt(0) != '-'&& second.charAt(0) == '-')){
+            isNegative = true;
+        }
+        byte[] one;
+        if (first.charAt(0) == '-') {
+            one = convertToArray(1, first);
+        } else {
+            one = convertToArray(0, first);
+        }
+        byte[] two;
+        if (second.charAt(0) == '-') {
+            two = convertToArray(1, second);
+        } else {
+            two = convertToArray(0, second);
+        }
         if (one.length >= two.length && isBigger(one, two)) { //если 1 число больше 2
-            byte[] result = new byte[one.length - two.length + 1]; //вводим байтовый массив-результат
+            byte[] result= new byte[one.length - two.length + 1];//вводим байтовый массив-результат
             for (int i = 0; one.length - i >= two.length; i++) {//отделяем СЛЕВА от делимого количество символов как в делителе
                 int k = i - 1;
                 int plus = 0;
@@ -336,11 +318,11 @@ class LongArithmetic {
                     }
                     k--;
                 }
-                byte[] a1 = subArray(one, i - plus, two.length + plus); //подмассив
-                if (isBigger(a1, two)) { //если подмассив > числа на которе делю то заходим в 1.1
+                byte[] stringNumber1 = subArray(one, i - plus, two.length + plus); //подмассив
+                if (isBigger(stringNumber1, two)) { //если подмассив > числа на которе делю то заходим в 1.1
                     byte count = 2; //1.1
                     byte[] mult = multiply(two, count);
-                    while (!isBigger(mult, a1) || isEqual(mult, a1)) {
+                    while (!isBigger(mult, stringNumber1) || isEqual(mult, stringNumber1)) {
                         count++;//множитель для делителя чтобы вычитаемое было с мин. остатком
                         mult = multiply(two, count);
                     }
@@ -350,9 +332,9 @@ class LongArithmetic {
                         result[result.length - 1] = count;
                     } else
                         result[i + 1] = count;
-                    a1 = subtraction(a1, multiply(two, count)); // вычитание
-                    for (k = i; k < a1.length + i; k++) { // заменяем на следующий делитель
-                        one[k - plus] = a1[k - i];
+                    stringNumber1 = subtraction(stringNumber1, multiply(two, count)); // вычитание
+                    for (k = i; k < stringNumber1.length + i; k++) { // заменяем на следующий делитель
+                        one[k - plus] = stringNumber1[k - i];
                     }
                 } else { // если не хватило одного добавленного разряда записываем в ответе 0 и спускаем еще один разряд
                     if ((i + 1) == result.length) {
@@ -361,6 +343,14 @@ class LongArithmetic {
                     } else
                         result[i + 1] = 0;
                 }
+            }
+            if (isNegative) {
+                byte[] res = new byte[result.length + 1];
+                for (int i = 0; i < result.length; i++) {
+                    res[i+1] = result[i];
+                }
+                result = res;
+                result[0] = -1;
             }
             return result;
         } else {
@@ -504,15 +494,109 @@ class LongArithmetic {
         }
     }
 
-    void showArray(byte[] array) {
-        for (byte anArray : array) System.out.print(anArray);
+    public void showArray(byte[] array) {
+
+        for (byte anArray : array) {
+            if (anArray == -1) {
+                System.out.print('-');
+            } else {
+                System.out.print(anArray);
+            }
+        }
     }
 
-     void rightLogicalShift(int n, String number) {
-        byte[] b = convertToArray(degree(n,"2"));
-         showArray(division(convertToArray(number),b));
+    public void rightLogicalShift(int n, String result) throws NotANumberExeption {
+        showArray(division(result, degree(n, "2")));
     }
 
+    private class StringTransformer {
+        private String stringNumber1;
+        private String stringNumber2;
+        private byte[] byteNumber1;
+        private byte[] byteNumber2;
+        private boolean isANegative;
+        private boolean isBNegative;
+
+        public StringTransformer(String stringNumber1, String stringNumber2) {
+            this.stringNumber1 = stringNumber1;
+            this.stringNumber2 = stringNumber2;
+        }
+
+        public byte[] getByteNumber1() {
+            return byteNumber1;
+        }
+
+        public byte[] getByteNumber2() {
+            return byteNumber2;
+        }
+
+        public boolean isANegative() {
+            return isANegative;
+        }
+
+        public boolean isBNegative() {
+            return isBNegative;
+        }
+
+        public StringTransformer invoke(int length, int length2) throws NotANumberExeption {
+
+            isANegative = false;
+            isBNegative = false;
+            byteNumber1 = new byte[length];
+            if (stringNumber1.length() == 0 || stringNumber2.length() == 0) {
+                throw new NotANumberExeption("Not a Number");
+            }
+            char number = stringNumber1.charAt(0);
+            if (number != '-' && number != '1' && number != '2' && number != '3' && number != '4' &&
+                    number != '5' && number != '6' && number != '7' && number != '8' &&
+                    number != '9' && number != '0') {
+                throw new NotANumberExeption("Not a Number");
+            }
+            number = stringNumber2.charAt(0);
+            if (number != '-' && number != '1' && number != '2' && number != '3' && number != '4' &&
+                    number != '5' && number != '6' && number != '7' && number != '8' &&
+                    number != '9' && number != '0') {
+                throw new NotANumberExeption("Not a Number");
+            }
+
+            for (int i = 1; i < stringNumber1.length(); i++) {
+                number = stringNumber1.charAt(i);
+                if (number != '1' && number != '2' && number != '3' && number != '4' &&
+                        number != '5' && number != '6' && number != '7' && number != '8' &&
+                        number != '9' && number != '0') {
+                    throw new NotANumberExeption("Not a Number");
+                }
+            }
+            for (int i = 1; i < stringNumber2.length(); i++) {
+                number = stringNumber2.charAt(i);
+                if (number != '1' && number != '2' && number != '3' && number != '4' &&
+                        number != '5' && number != '6' && number != '7' && number != '8' &&
+                        number != '9' && number != '0') {
+                    throw new NotANumberExeption("Not a Number");
+                }
+            }
+
+
+            for (int i = stringNumber1.length() - 1; i > -1; i--) {
+                int j = stringNumber1.length() - i - 1;
+                byteNumber1[i] = (byte) Character.getNumericValue(stringNumber1.charAt(j));
+                if (byteNumber1[i] == -1) {
+                    isANegative = true;
+                    byteNumber1[i] = 0;
+                }
+            }
+            byteNumber2 = new byte[length2];
+            for (int i = stringNumber2.length() - 1; i > -1; i--) {
+                int j = stringNumber2.length() - i - 1;
+                byteNumber2[i] = (byte) Character.getNumericValue(stringNumber2.charAt(j));
+                if (byteNumber2[i] == -1) {
+                    isBNegative = true;
+                    byteNumber2[i] = 0;
+                }
+            }
+            return this;
+        }
+    }
 }
 
 
